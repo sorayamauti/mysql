@@ -1,0 +1,49 @@
+FROM python:3.8.3-buster
+USER root
+
+#文字コード日本語化
+ENV LANGUAGE ja_JP:ja
+ENV TZ JST-9
+ENV TERM xterm
+
+
+RUN apt update && apt install -y lsb-release \ 
+    && apt remove -y libmariadb-dev-compat libmariadb-dev
+
+#pythonからMySQLにデータを挿入するためのモジュール
+RUN wget https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-common_8.0.18-1debian10_amd64.deb \
+    https://dev.mysql.com/get/Downloads/MySQL-8.0/libmysqlclient21_8.0.18-1debian10_amd64.deb \
+    https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-community-client-core_8.0.18-1debian10_amd64.deb \
+    https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-community-client_8.0.18-1debian10_amd64.deb \
+    https://dev.mysql.com/get/Downloads/MySQL-8.0/libmysqlclient-dev_8.0.18-1debian10_amd64.deb
+
+RUN dpkg -i mysql-common_8.0.18-1debian10_amd64.deb \
+    libmysqlclient21_8.0.18-1debian10_amd64.deb \
+    mysql-community-client-core_8.0.18-1debian10_amd64.deb \
+    mysql-community-client_8.0.18-1debian10_amd64.deb \
+    libmysqlclient-dev_8.0.18-1debian10_amd64.deb
+
+RUN apt update
+
+
+RUN /usr/local/bin/python -m pip install --upgrade pip
+
+#pythonのモジュールをインストール
+RUN pip3 install beautifulsoup4 && \
+    pip3 install SQLAlchemy && \
+    pip3 install requests && \
+    pip3 install pymysql && \
+    pip3 install html.parser && \
+    pip3 install cryptography && \
+    pip3 install lxml && \
+    pip3 install mysqlclient
+
+#ディレクトリーを作成
+RUN mkdir /worker && \
+    mkdir /worker/pythonsc && \
+    mkdir /worker/pythonsc/cord1 && \
+    mkdir /worker/pythonsc/cord2
+
+COPY ./wait-for-pdb.sh /worker/pythonsc
+COPY ./main.py /worker/pythonsc
+CMD bash -c "npm start && /bin/bash"

@@ -1,0 +1,43 @@
+version: '3.6'
+#ネットワークの使用するアドレスは決めておいたほうが良い
+networks:
+  network1:
+    name: testnetwork
+    ipam:
+      config:
+        - subnet: 192.168.5.0/24
+
+services:      
+  mysql:
+    build: ./productdb
+    restart: always
+    container_name: mysql
+    #データベースのユーザ設定
+    environment: 
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'pass'
+    #追加のデータベース、テーブル作成と初期でデータを追加
+    volumes: 
+      - ./initdb.d:/docker-entrypoint-initdb.d
+    networks:
+      - network1
+
+  pcdb:
+    build: ./python/create_tables
+    container_name: pcdb
+    #"depends_on:"はコンテナの起動順序を決めることができる
+    #データベースの場合は"depends_on:"だけでは足りないのでシェルスクリプトを使用する
+    depends_on: 
+      - mysql
+    tty: true
+    #マウントしておくことでコードの変更点がコンテナに即時反映される
+    volumes:
+      - ./python/create_tables/cord/cord1:/worker/pythonsc/cord1
+      - ./python/create_tables/cord/cord2:/worker/pythonsc/cord2
+    working_dir: /worker/pythonsc
+    #シェルスクリプトを実行して確認をとる
+    command: ["/worker/pythonsc/wait-for-pdb.sh", "mysql", "python", "/worker/pythonsc/main.py"]
+    networks:
+      - network1

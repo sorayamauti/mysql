@@ -1,0 +1,11 @@
+amdCPU	/5pc_parts/shopping/br10	ソケット形状	動作クロック	コア数	スレッド数	TDP
+intelCPU	/5pc_parts/shopping/br11	ソケット形状	動作クロック	コア数	スレッド数	TDP
+motherBoard	/5pc_parts/shopping/br21	ソケット形状	チップセット	対応メモリ	メモリ最大	フォームファクタ
+SSD	/5pc_parts/shopping/br115	接続	容量	サイズ	最大書込速度	最大読込速度
+memory	/5pc_parts/shopping/br12	容量	規格	速度
+HDD	/5pc_parts/shopping/br13	接続	容量	回転数	キャッシュ	サイズ
+case	/5pc_parts/shopping/br72    対応ケースサイズ    拡張スロット  3.5インチベイ数(内部ベイ)
+power	/5pc_parts/shopping/br83	統合出力 	認証  対応規格
+cpuAirCooler	/5pc_parts/shopping/br95/sbr282	対応ソケット ファン回転数  ノイズ 風量
+cpuLiquidCooler	/5pc_parts/shopping/br95/sbr321	対応ソケット ファン回転数  ノイズ 風量
+caseCooler /5pc_parts/shopping/br95/sbr283 サイズ　ファン回転数  ノイズ 風量

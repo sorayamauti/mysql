@@ -1,0 +1,2 @@
+docker pull mysql
+docker run --name test1 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=test1 -e MYSQL_USER=master -e MYSQL_PASSWORD=master  -d -p 3304:3306 mysql

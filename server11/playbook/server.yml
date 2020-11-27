@@ -1,0 +1,87 @@
+- hosts: all
+  user: vagrant
+  become: yes
+  tasks:
+    - name: Installing Python3
+      dnf:
+        name: python36
+        state: latest
+
+    - name: install yum-utils
+      yum: name=yum-utils state=present
+
+    - name: add docker repo
+      shell: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+      args:
+        chdir: "/etc/yum.repos.d"
+        creates: docker-ce.repo
+
+    - name: install docker-ce
+      yum: name=docker-ce state=present
+
+    - name: add group
+      user: name=vagrant groups=docker append=yes
+      tags: dockerhost
+      become: True
+
+    - name: restart docker
+      systemd:
+        name: docker.service
+        state: restarted
+        daemon_reload: yes
+        enabled: yes
+
+    - name: ensure docker-compose is installed and available
+      get_url:
+        url : https://github.com/docker/compose/releases/download/1.24.0/docker-compose-{{ansible_system}}-{{ansible_machine}}
+        dest: /usr/local/bin/docker-compose
+        owner: vagrant
+        group: vagrant
+        mode: 'u+x,g+x'
+
+    # - name: Install MySQL Server.
+    #   dnf:
+    #     name:
+    #       - mysql-server
+    #       - mysql
+    #       - python3-PyMySQL
+    #     state: latest
+        
+    # <docker install 手打ちで入力>
+    # $ sudo dnf install -y device-mapper-persistent-data lvm2
+    # $ sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    # $ sudo dnf install -y --nobest docker-ce docker-ce-cli
+    # $ sudo usermod -aG docker $USER
+    # $ sudo systemctl enable docker
+    # $ sudo systemctl start docker
+
+
+    # - name: Enable & Starting MySQL Service.
+    #   systemd: name=mysqld state=started enabled=true  
+
+    # - name: Update mysql root user password.
+    #   mysql_user:
+    #     login_user: root
+    #     login_password: ""
+    #     name: root
+    #     password: root
+    #     check_implicit_admin: yes
+    #     priv: '*.*:ALL,GRANT'
+    #     state: present
+
+    # - name: Create mysql user.
+    #   mysql_user:
+    #     login_user: root
+    #     login_password: root
+    #     name: master
+    #     password: master
+    #     host: "%"
+    #     priv: '*.*:ALL,GRANT'
+    #     state: present
+
+    # - name: Create a new database.
+    #   mysql_db:
+    #     login_user: master
+    #     login_password: master
+    #     name: test1
+    #     state: present

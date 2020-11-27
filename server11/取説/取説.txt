@@ -1,0 +1,9 @@
+・vagrant up
+・vagrant teraterm
+・teraterm接続後はsudo -sでrootuserに入っておく
+・dockerのインストールはdockerリファレンス参照　手動でインストールお願いします。
+・その後はdockermysqlに書いてあるコマンドを実行 手動でコピペお願いします。。。dockerfileに挫折
+・生成できたコンテナに
+  > docker exec -it コンテナ名 /bin/bash (コンテナ接続)
+  > mysql -u master -pmaster (masterは生成済み)
+  > use test1 (test1も生成済み)
